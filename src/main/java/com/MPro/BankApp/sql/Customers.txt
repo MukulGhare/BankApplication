@@ -1,0 +1,9 @@
+// This is  Customers table in Postgre (during development testing)
+
+"id"	"name"	    "surname"	"identityno"	"password"
+1	    "Phelia"	"Szymanzyk"	918809349	    "A5KCNToB"    //customer added before password encryption
+3	    "Angeline"	"O'Nion"	605322644	    "YGWPlpkhzp"  //customer added before password encryption
+6	    "navin"	    "telusko"	572481943	    "$2a$12$bzFBqiFiWvO.yXrukiPtce3O0h1XtspQz4RKsoyngRDN7cJn6yTfm" //n@123
+2	    "Mukul"	    "Ghare"	    710687486	    "$2a$12$R1WY7HDoGVZn7NSEhXVVXuNxDtSJ.bmMthzA.H6uCLbmTzqO266nG" //m@123
+5	    "Rohit"	    "Kumar"	    968343744	    "$2a$12$k6H8q5.hscd75nYWeEjwxeIvGBSuqYS/6AuaSkgfO9UVbhZ20ATaG" //r@123
+4	    "Sushil"	"Sharma"	219386789	    "$2a$12$9a1ljX/Mn.oG.x4aHJ.NmOHckVe5p4k/fKzfVCCJJlq7hkLQ3mKYq" //s@123

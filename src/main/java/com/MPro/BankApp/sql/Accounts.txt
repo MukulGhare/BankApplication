@@ -1,0 +1,10 @@
+// This is  Accunts table in Postgre (during development testing)
+
+
+"id"	"customerid"	"ibanno"	                "currentbalance"	"currencytype"	"accounttype"	"statustype"	"canceldate"
+1	    1	            "MK76 602D 9CZV JLRQ B95"	7615.61	            "EU"			null            null            "2021-06-23"
+2	    2	            "LU47 598E 3CPF IEVW X36W"	4188.23	            "EU"			null            null            null
+4	    6	            "EU78 QA6Z DOB2 EPET F10N"	4666.66	            "EU"	        "CURRENT"	    "ACTIVE"	    null
+3	    6	            "US15 UHPJ NZAS IKT2 VQ2C"	7555.55	            "USD"	        "SAVINGS"	    "PASSIVE"	    "2025-09-12"
+6	    4	            "EU01 9G19 GFOO MRM8 CNQX"	16333.33	        "EU"	        "SAVINGS"	    "ACTIVE"	    null
+5	    4	            "EU54 JQAK 6FKG VA73 UTHV"	88666.66	        "EU"	        "SAVINGS"	    "ACTIVE"	    null
