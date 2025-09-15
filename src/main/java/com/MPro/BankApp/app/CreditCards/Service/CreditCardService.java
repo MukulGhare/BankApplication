@@ -5,11 +5,14 @@ import com.MPro.BankApp.app.CreditCards.Entity.CreditCards;
 import com.MPro.BankApp.app.CreditCards.Repo.CreditCardRepo;
 import com.MPro.BankApp.app.CreditCards.dto.CreateCardDto;
 import com.MPro.BankApp.app.CreditCards.dto.ReturnCardDetailsDto;
+import com.MPro.BankApp.app.CreditCards.dto.UseCardDto;
 import com.MPro.BankApp.app.CreditCards.mappers.CreditCardMapper;
 import com.MPro.BankApp.app.Security.Service.AuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +38,53 @@ public class CreditCardService {
         return cardMapper.convertToReturnCard(card);
     }
 
+    @Transactional
+    public ReturnCardDetailsDto useCard(UseCardDto useCardDto) {
+        BigDecimal amount = useCardDto.getAmount();
+
+        CreditCards card = cardRepo.findByCardNo(useCardDto.getCardNo());
+
+        if (isCardActive(card) && card.getCustomerId() == authService.getCurrentJwtUser()){
+            //System.out.println(" Card is Active and with correct user");
+
+            if(checkCardCredentials(useCardDto,card)){
+                //System.out.println("Credentials OK");
+                applyCharge(card,amount);
+            }
+        } else System.out.println("Card not found OR Card not Active");
+
+        cardRepo.save(card);
+
+        return cardMapper.convertToReturnCard(card);
+    }
+
+    private boolean checkCardCredentials(UseCardDto useCardDto, CreditCards card){
+
+        if( useCardDto.getCardNo() != card.getCardNo()) return false;
+        //System.out.println("getCardNo OK");
+
+
+        if(!useCardDto.getExpireDate().equals(card.getExpireDate())) return false;
+        //System.out.println("getExpireDate OK");
+
+        if ( useCardDto.getCvv() != card.getCvv()) return false;
+        //System.out.println("getCvv OK");
+
+        return  true;
+    }
+
+    private void applyCharge(CreditCards useCard, BigDecimal amount){
+        System.out.println("Card debt before " + useCard.getCurrentDebt());
+        useCard.setAvailableLimit(useCard.getAvailableLimit().subtract(amount));
+        useCard.setCurrentDebt(useCard.getCurrentDebt().add(amount));
+        System.out.println("Card debt after " + useCard.getCurrentDebt());
+
+    }
+
+    private boolean isCardActive(CreditCards card) {
+        return card.getCardStatusType() == StatusType.ACTIVE;
+    }
+
     private CreditCards createNewCreditCard(CreateCardDto maxLimit){
         CreditCards newCard = new CreditCards();
 
@@ -58,6 +108,7 @@ public class CreditCardService {
 
          return  random.nextLong(min,max);
     }
+
 
 
 }
