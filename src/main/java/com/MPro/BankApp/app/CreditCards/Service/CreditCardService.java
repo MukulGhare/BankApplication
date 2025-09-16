@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -110,5 +112,49 @@ public class CreditCardService {
     }
 
 
+    public ReturnCardDetailsDto getCardById(int id) {
+        int custID = authService.getCurrentJwtUser();
+        CreditCards card = cardRepo.getReferenceById(id);
+        if( card.getCustomerId() != custID){
+            return  null;
+        }
+        return cardMapper.convertToReturnCard(card);
+    }
 
+    public List<ReturnCardDetailsDto> getAllCustomerCards() {
+         List<CreditCards> cardsL = cardRepo.findByCustomerId(authService.getCurrentJwtUser());
+
+         return cardMapper.convertToReturnList(cardsL);
+
+    }
+
+    public String cancelCard( UseCardDto useCardDto) {
+        CreditCards card = cardRepo.findByCardNo(useCardDto.getCardNo());
+        if( card.getCardStatusType() == StatusType.PASSIVE ){
+            return "Card Already InActive";
+        } else {
+            card.setCardStatusType(StatusType.PASSIVE);
+            card.setCancelDate(LocalDate.now());
+            cardRepo.save(card);
+            return  "Card marked as InActive";
+        }
+    }
+
+    public ReturnCardDetailsDto payCard(UseCardDto useCardDto) {
+
+        BigDecimal amount = useCardDto.getAmount();
+
+        CreditCards card = cardRepo.findByCardNo(useCardDto.getCardNo());
+
+        if (isCardActive(card) && card.getCustomerId() == authService.getCurrentJwtUser()){
+            //System.out.println(" Card is Active and with correct user");
+            card.setCurrentDebt(card.getCurrentDebt().subtract(amount));
+            card.setAvailableLimit(card.getAvailableLimit().add(amount));
+            cardRepo.save(card);
+
+        } else System.out.println("Card not found OR Card not Active");
+
+        return cardMapper.convertToReturnCard(card);
+
+    }
 }
